@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Biblioteca Maria de Castro Ribeiro</title>
+
+<style>
+body{
+font-family: 'Segoe UI', Tahoma, sans-serif;
+background: linear-gradient(135deg,#e9f5ee,#f4f4f4);
+padding:20px;
+text-align:center;
+margin:0;
+color:#333;
+}
+
+/* CARD PRINCIPAL */
+.box{
+background:white;
+padding:25px;
+border-radius:16px;
+max-width:900px;
+margin:20px auto;
+box-shadow:0 10px 25px rgba(0,0,0,.08);
+transition:0.3s;
+}
+
+.box:hover{
+transform: translateY(-2px);
+}
+
+/* INPUTS */
+input,button{
+padding:12px;
+margin:8px;
+width:90%;
+max-width:420px;
+border-radius:10px;
+font-size:15px;
+outline:none;
+}
+
+input{
+border:1px solid #ddd;
+transition:0.3s;
+}
+
+input:focus{
+border-color:#0b7a2f;
+box-shadow:0 0 5px rgba(11,122,47,.3);
+}
+
+/* BOTÕES */
+button{
+background:linear-gradient(135deg,#0b7a2f,#13a84a);
+color:white;
+border:none;
+cursor:pointer;
+font-weight:bold;
+transition:0.3s;
+box-shadow:0 4px 10px rgba(0,0,0,.15);
+}
+
+button:hover{
+transform: scale(1.03);
+background:linear-gradient(135deg,#0a6b29,#0f8f3f);
+}
+
+/* TABELA */
+table{
+width:100%;
+margin-top:15px;
+border-collapse:collapse;
+border-radius:10px;
+overflow:hidden;
+}
+
+th,td{
+padding:12px;
+border-bottom:1px solid #eee;
+}
+
+th{
+background:#0b7a2f;
+color:white;
+text-transform:uppercase;
+font-size:13px;
+letter-spacing:1px;
+}
+
+tr:nth-child(even){
+background:#f9f9f9;
+}
+
+tr:hover{
+background:#eef7f1;
+}
+
+/* TELAS */
+.tela{
+display:none;
+}
+
+/* TÍTULOS */
+h1,h2,h3{
+color:#0b7a2f;
+}
+
+/* IMAGEM */
+img{
+border-radius:12px;
+margin-top:10px;
+box-shadow:0 6px 15px rgba(0,0,0,.15);
+}
+
+/* RANKING */
+#ranking{
+text-align:left;
+max-width:500px;
+margin:auto;
+padding:10px;
+background:#f7fff9;
+border-radius:12px;
+border:1px solid #d7f3df;
+}
+</style>
+</head>
+
+<body>
+
+<div id="inicio" class="box">
+
+<h1>📚 Biblioteca Maria de Castro Ribeiro</h1>
+
+<img src="https://uploads.onecompiler.io/44sh88c69/1781656068285/WhatsApp%20Image%202026-06-16%20at%2021.23.09.jpeg"
+width="120">
+
+<br><br>
+
+<button onclick="mostrarEscola()"> Área da Escola</button>
+<br>
+<button onclick="mostrarAluno()"> Área do Aluno</button>
+
+</div>
+
+<div id="loginEscola" class="box tela">
+
+<h2> Área da Escola</h2>
+
+<input type="password" id="senha" placeholder="Digite a senha">
+
+<button onclick="entrar()">Entrar</button>
+<button onclick="voltar()">Voltar</button>
+
+</div>
+
+<div id="painelEscola" class="box tela">
+
+<h2> Painel do Bibliotecário</h2>
+
+<h3>Cadastrar Aluno</h3>
+
+<input id="nomeAluno" placeholder="Nome do aluno">
+<input id="turmaAluno" placeholder="Turma">
+<input id="telefoneAluno" placeholder="WhatsApp">
+
+<button onclick="cadastrarAluno()">Cadastrar</button>
+
+<hr>
+
+<h3>Registrar Livro</h3>
+
+<input id="alunoLivro" placeholder="Nome do aluno">
+<input id="nomeLivro" placeholder="Nome do livro">
+
+<button onclick="registrarLivro()">Registrar Livro</button>
+
+<hr>
+
+<h3>📋 Alunos</h3>
+
+<table>
+<thead>
+<tr>
+<th>Nome</th>
+<th>Turma</th>
+<th>Livros</th>
+</tr>
+</thead>
+
+<tbody id="tabelaAlunos"></tbody>
+</table>
+
+<button onclick="voltarInicio()">Sair</button>
+
+</div>
+
+<div id="areaAluno" class="box tela">
+
+<h2> Área do Aluno</h2>
+
+<input id="consultaAluno" placeholder="Digite seu nome">
+
+<button onclick="consultarHistorico()">Consultar Histórico</button>
+
+<div id="resultadoHistorico"></div>
+
+<hr>
+
+<h2>🏆 Ranking dos Leitores</h2>
+
+<div id="ranking"></div>
+
+<button onclick="voltarInicio()">Voltar</button>
+
+</div>
+
+<script>
+
+
+let alunos = JSON.parse(localStorage.getItem("alunos")) || [];
+
+function salvar(){
+localStorage.setItem("alunos",JSON.stringify(alunos));
+}
+
+function esconderTudo(){
+document.getElementById("inicio").style.display="none";
+document.getElementById("loginEscola").style.display="none";
+document.getElementById("painelEscola").style.display="none";
+document.getElementById("areaAluno").style.display="none";
+}
+
+function mostrarEscola(){
+esconderTudo();
+document.getElementById("loginEscola").style.display="block";
+}
+
+function mostrarAluno(){
+esconderTudo();
+document.getElementById("areaAluno").style.display="block";
+atualizarRanking();
+}
+
+function voltar(){
+esconderTudo();
+document.getElementById("inicio").style.display="block";
+}
+
+function voltarInicio(){ voltar(); }
+
+function entrar(){
+let senha = document.getElementById("senha").value;
+if(senha==="123"){
+esconderTudo();
+document.getElementById("painelEscola").style.display="block";
+}else{
+alert("Senha incorreta");
+}
+}
+
+function cadastrarAluno(){
+let nome = document.getElementById("nomeAluno").value;
+let turma = document.getElementById("turmaAluno").value;
+let telefone = document.getElementById("telefoneAluno").value;
+
+if(nome===""){
+alert("Digite o nome");
+return;
+}
+
+alunos.push({nome,turma,telefone,livros:[]});
+salvar();
+atualizarTabela();
+atualizarRanking();
+alert("Aluno cadastrado!");
+}
+
+function registrarLivro(){
+let alunoNome = document.getElementById("alunoLivro").value;
+let livro = document.getElementById("nomeLivro").value;
+
+let aluno = alunos.find(a => a.nome.toLowerCase() === alunoNome.toLowerCase());
+
+if(!aluno){
+alert("Aluno não encontrado");
+return;
+}
+
+aluno.livros.push(livro);
+salvar();
+atualizarTabela();
+atualizarRanking();
+alert("Livro registrado!");
+}
+
+function consultarHistorico(){
+let nome = document.getElementById("consultaAluno").value;
+
+let aluno = alunos.find(a => a.nome.toLowerCase() === nome.toLowerCase());
+
+if(!aluno){
+document.getElementById("resultadoHistorico").innerHTML="Aluno não encontrado.";
+return;
+}
+
+let html = "<h3>Livros Lidos</h3><ul>";
+
+aluno.livros.forEach(livro=>{
+html += "<li>"+livro+"</li>";
+});
+
+html += "</ul>";
+html += "<b>Total: "+aluno.livros.length+" livro(s)</b>";
+
+document.getElementById("resultadoHistorico").innerHTML=html;
+}
+
+function atualizarTabela(){
+let tabela = document.getElementById("tabelaAlunos");
+tabela.innerHTML="";
+alunos.forEach(aluno=>{
+tabela.innerHTML += `
+<tr>
+<td>${aluno.nome}</td>
+<td>${aluno.turma}</td>
+<td>${aluno.livros.length}</td>
+</tr>`;
+});
+}
+
+function atualizarRanking(){
+let ranking = document.getElementById("ranking");
+
+let ordenados = [...alunos].sort((a,b)=>b.livros.length-a.livros.length);
+
+ranking.innerHTML="";
+
+ordenados.forEach((aluno,index)=>{
+ranking.innerHTML += `
+${index+1}º 🏆 ${aluno.nome} - ${aluno.livros.length} livro(s)<br><br>`;
+});
+}
+
+atualizarTabela();
+atualizarRanking();
+
+</script>
+
+</body>
+</html>
